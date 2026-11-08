@@ -29,6 +29,13 @@ import {
 export const ConocenosView: React.FC = () => {
   const { easyReading, openModal, speakText, announce } = useAccessibility();
   const [imgError, setImgError] = useState(false);
+  const [workshopIdx, setWorkshopIdx] = useState(0);
+
+  const workshopCandidates = [
+    DOSSIER_IMAGES.workshopFamilies,
+    DOSSIER_IMAGES.workshopFamiliesFallback,
+    '/images/dossier_taller_familias_1793908198282.jpg',
+  ];
 
   // Canal Ético Form state
   const [reportType, setReportType] = useState<'anonimo' | 'identificado'>('anonimo');
@@ -165,12 +172,18 @@ export const ConocenosView: React.FC = () => {
               {INSTITUTIONAL_DATA.targetAudience}
             </p>
             <div className="rounded-lg overflow-hidden border border-neutral-200 bg-stone-100">
-              {!imgError ? (
+              {!imgError && workshopIdx < workshopCandidates.length ? (
                 <img
-                  src={DOSSIER_IMAGES.workshopFamilies}
+                  src={workshopCandidates[workshopIdx]}
                   alt="Imagen ilustrativa de una sesión participativa de orientación alimentaria con familias y personas cuidadoras"
                   referrerPolicy="no-referrer"
-                  onError={() => setImgError(true)}
+                  onError={() => {
+                    if (workshopIdx < workshopCandidates.length - 1) {
+                      setWorkshopIdx((i) => i + 1);
+                    } else {
+                      setImgError(true);
+                    }
+                  }}
                   className="w-full h-56 object-cover"
                 />
               ) : (

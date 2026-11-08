@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useCMS } from '../../context/CMSContext';
+import { NutriDiversaLogo } from '../NutriDiversaLogo';
 import {
   INSTITUTIONAL_DATA,
   DOSSIER_PDF_URL,
@@ -29,8 +30,33 @@ import {
 export const HomeView: React.FC = () => {
   const { navigateTo, easyReading, speakText, openModal, announce } = useAccessibility();
   const { siteConfig } = useCMS();
+  const [logoIdx, setLogoIdx] = useState(0);
+  const [heroIdx, setHeroIdx] = useState(0);
   const [heroImgError, setHeroImgError] = useState(false);
+  const [workshopIdx, setWorkshopIdx] = useState(0);
   const [workshopImgError, setWorkshopImgError] = useState(false);
+
+  // Logo fallback chain: primary transparent PNG -> root transparent PNG -> logo_def_1.png -> logo_def_1.svg
+  const logoCandidates = [
+    '/assets/aistudio/logo_horiz_tran_sin_c690c1cd.png',
+    '/logo_horiz_tran_sin_c690c1cd.png',
+    '/logo_def_1.png',
+    '/logo_def_1.svg',
+  ];
+
+  // Hero image fallback chain: bundled asset -> /assets/images/ -> /images/
+  const heroCandidates = [
+    siteConfig.heroImageUrl || DOSSIER_IMAGES.coverMeal,
+    DOSSIER_IMAGES.coverMealFallback,
+    '/images/dossier_mesa_inclusiva_1793908196707.jpg',
+  ];
+
+  // Workshop image fallback chain: bundled asset -> /assets/images/ -> /images/
+  const workshopCandidates = [
+    DOSSIER_IMAGES.workshopFamilies,
+    DOSSIER_IMAGES.workshopFamiliesFallback,
+    '/images/dossier_taller_familias_1793908198282.jpg',
+  ];
 
   const handleReadHero = () => {
     speakText(
@@ -57,14 +83,19 @@ export const HomeView: React.FC = () => {
               <span>RNA Nº {INSTITUTIONAL_DATA.nationalRegistry.number}</span>
             </div>
 
-            {/* Logo Transparente NutriDiversa (420px - 20% más grande) */}
+            {/* Logo Oficial NutriDiversa con respaldo progresivo */}
             <div className="flex items-center justify-center my-2">
-              <img
-                src="/assets/aistudio/logo_horiz_tran_sin_c690c1cd.png"
-                alt="Logotipo Oficial Asociación NutriDiversa"
-                referrerPolicy="no-referrer"
-                className="w-[420px] max-w-full h-auto object-contain"
-              />
+              {logoIdx < logoCandidates.length ? (
+                <img
+                  src={logoCandidates[logoIdx]}
+                  alt="Logotipo Oficial Asociación NutriDiversa"
+                  referrerPolicy="no-referrer"
+                  onError={() => setLogoIdx((i) => i + 1)}
+                  className="w-[420px] max-w-full h-auto object-contain"
+                />
+              ) : (
+                <NutriDiversaLogo variant="horizontal" size="3xl" />
+              )}
             </div>
 
             {/* Título Principal del Dossier */}
@@ -102,12 +133,18 @@ export const HomeView: React.FC = () => {
             {/* Fotografía de Portada del Dossier (Mesa inclusiva con cubiertos adaptados) */}
             <div className="w-full max-w-3xl mx-auto pt-2">
               <div className="rounded-xl overflow-hidden border border-neutral-200 shadow-xs bg-stone-100">
-                {!heroImgError ? (
+                {!heroImgError && heroIdx < heroCandidates.length ? (
                   <img
-                    src={DOSSIER_IMAGES.coverMeal}
+                    src={heroCandidates[heroIdx]}
                     alt="Mesa de comida familiar mediterránea con platos de arroz, ensalada y en primer plano un mantel individual azul antideslizante con cubiertos adaptados de mango grueso rojo y azul"
                     referrerPolicy="no-referrer"
-                    onError={() => setHeroImgError(true)}
+                    onError={() => {
+                      if (heroIdx < heroCandidates.length - 1) {
+                        setHeroIdx((i) => i + 1);
+                      } else {
+                        setHeroImgError(true);
+                      }
+                    }}
                     className="w-full max-h-[420px] object-cover"
                   />
                 ) : (
@@ -255,12 +292,18 @@ export const HomeView: React.FC = () => {
 
           <div className="lg:col-span-5 space-y-2">
             <div className="rounded-xl overflow-hidden border border-neutral-200 shadow-xs bg-stone-100">
-              {!workshopImgError ? (
+              {!workshopImgError && workshopIdx < workshopCandidates.length ? (
                 <img
-                  src={DOSSIER_IMAGES.workshopFamilies}
+                  src={workshopCandidates[workshopIdx]}
                   alt="Sesión de educación alimentaria inclusiva alrededor de una mesa con una lámina visual de alimentos saludables y frutas frescas junto a familiares y personas cuidadoras"
                   referrerPolicy="no-referrer"
-                  onError={() => setWorkshopImgError(true)}
+                  onError={() => {
+                    if (workshopIdx < workshopCandidates.length - 1) {
+                      setWorkshopIdx((i) => i + 1);
+                    } else {
+                      setWorkshopImgError(true);
+                    }
+                  }}
                   className="w-full h-72 sm:h-80 object-cover"
                 />
               ) : (

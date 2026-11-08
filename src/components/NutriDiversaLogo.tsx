@@ -20,9 +20,10 @@ export const NutriDiversaLogo: React.FC<NutriDiversaLogoProps> = ({
   const { highContrast } = useAccessibility();
   const cms = useCMS();
   const siteConfig = cms?.siteConfig;
+  const [imgLoadFailed, setImgLoadFailed] = React.useState(false);
 
   // Custom logo from CMS (User can upload or link the official PNG/SVG in the CMS admin panel)
-  if (siteConfig?.logoType === 'custom_url' && (siteConfig?.logoUrl || siteConfig?.logoUrlStacked)) {
+  if (!imgLoadFailed && siteConfig?.logoType === 'custom_url' && (siteConfig?.logoUrl || siteConfig?.logoUrlStacked)) {
     const activeUrl = (variant === 'stacked' && siteConfig.logoUrlStacked)
       ? siteConfig.logoUrlStacked
       : (siteConfig.logoUrl || siteConfig.logoUrlStacked || '');
@@ -41,6 +42,7 @@ export const NutriDiversaLogo: React.FC<NutriDiversaLogoProps> = ({
         <img
           src={activeUrl}
           alt="Logotipo Oficial NutriDiversa"
+          onError={() => setImgLoadFailed(true)}
           className={`${imgHeight} max-w-full w-auto object-contain drop-shadow-xs transition-transform`}
         />
       </div>

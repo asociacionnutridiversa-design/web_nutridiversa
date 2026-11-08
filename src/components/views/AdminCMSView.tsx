@@ -641,6 +641,44 @@ export const AdminCMSView: React.FC = () => {
                 )}
               </div>
 
+              {/* Quick Select from public/ assets */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs pt-1">
+                <span className="text-neutral-500 font-medium">Logos del repositorio:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrl('/logo_def_1.png');
+                  }}
+                  className="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold border border-emerald-300 transition-colors"
+                  title="Usar /logo_def_1.png"
+                >
+                  logo_def_1.png
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrl('/logo_def_1.svg');
+                  }}
+                  className="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold border border-emerald-300 transition-colors"
+                  title="Usar /logo_def_1.svg"
+                >
+                  logo_def_1.svg
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrl('/assets/aistudio/logo_horiz_tran_sin_c690c1cd.png');
+                  }}
+                  className="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold border border-emerald-300 transition-colors"
+                  title="Usar horizontal transparente oficial"
+                >
+                  logo_transparente.png
+                </button>
+              </div>
+
               {/* Upload Drop Zone for Main Logo */}
               <div
                 onDragOver={(e) => {
@@ -740,6 +778,44 @@ export const AdminCMSView: React.FC = () => {
                     Quitar
                   </button>
                 )}
+              </div>
+
+              {/* Quick Select from public/ assets for Stacked */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs pt-1">
+                <span className="text-neutral-500 font-medium">Logos del repositorio:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrlStacked('/logo_def_2.png');
+                  }}
+                  className="px-2 py-0.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-900 font-bold border border-orange-300 transition-colors"
+                  title="Usar /logo_def_2.png"
+                >
+                  logo_def_2.png
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrlStacked('/logo_def_2.svg');
+                  }}
+                  className="px-2 py-0.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-900 font-bold border border-orange-300 transition-colors"
+                  title="Usar /logo_def_2.svg"
+                >
+                  logo_def_2.svg
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogoType('custom_url');
+                    setLogoUrlStacked('/assets/aistudio/Logotipo_nutridiversa_cuadrado-removebg-preview_123d2a34.png');
+                  }}
+                  className="px-2 py-0.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-900 font-bold border border-orange-300 transition-colors"
+                  title="Usar cuadrado transparente"
+                >
+                  cuadrado_emblema.png
+                </button>
               </div>
 
               {/* Upload Drop Zone for Stacked Logo */}
@@ -1848,7 +1924,14 @@ export const AdminCMSView: React.FC = () => {
               >
                 <div className="aspect-video bg-neutral-100 rounded-lg overflow-hidden flex items-center justify-center border">
                   {m.url.startsWith('data:image') || m.url.match(/\.(png|jpg|jpeg|webp|svg)$/i) ? (
-                    <img src={m.url} alt={m.name} className="w-full h-full object-contain p-2" />
+                    <img
+                      src={m.url}
+                      alt={m.name}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
+                      className="w-full h-full object-contain p-2"
+                    />
                   ) : (
                     <FileText className="w-8 h-8 text-neutral-400" />
                   )}

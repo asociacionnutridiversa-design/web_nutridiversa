@@ -1,12 +1,21 @@
 import { BoardMember, OfficialDocument, GuideResource, Article } from '../types';
 
+// Bundled image imports so Vite bundles and resolves them on Vercel and any host
+import coverMealImg from '../assets/images/dossier_mesa_inclusiva_1793908196707.jpg';
+import workshopFamiliesImg from '../assets/images/dossier_taller_familias_1793908198282.jpg';
+import kitchenAutonomyImg from '../assets/images/dossier_cocina_autonomia_1793908198321.jpg';
+
 export const DOSSIER_PDF_URL =
   '/assets/aistudio/Dossier_NutriDiversa__borrador_final_actualizado_dfe3321f.pdf';
 
 export const DOSSIER_IMAGES = {
-  coverMeal: '/src/assets/images/dossier_mesa_inclusiva_1793908196707.jpg',
-  workshopFamilies: '/src/assets/images/dossier_taller_familias_1793908198282.jpg',
-  kitchenAutonomy: '/src/assets/images/dossier_cocina_autonomia_1793908198321.jpg',
+  coverMeal: coverMealImg || '/assets/images/dossier_mesa_inclusiva_1793908196707.jpg',
+  workshopFamilies: workshopFamiliesImg || '/assets/images/dossier_taller_familias_1793908198282.jpg',
+  kitchenAutonomy: kitchenAutonomyImg || '/assets/images/dossier_cocina_autonomia_1793908198321.jpg',
+  // Direct public URL fallbacks in case dynamic loading is needed
+  coverMealFallback: '/assets/images/dossier_mesa_inclusiva_1793908196707.jpg',
+  workshopFamiliesFallback: '/assets/images/dossier_taller_familias_1793908198282.jpg',
+  kitchenAutonomyFallback: '/assets/images/dossier_cocina_autonomia_1793908198321.jpg',
 };
 
 export const INSTITUTIONAL_DATA = {

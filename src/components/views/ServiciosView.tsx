@@ -31,6 +31,13 @@ import {
 export const ServiciosView: React.FC = () => {
   const { easyReading, speakText, announce } = useAccessibility();
   const [kitchenImgError, setKitchenImgError] = useState(false);
+  const [kitchenIdx, setKitchenIdx] = useState(0);
+
+  const kitchenCandidates = [
+    DOSSIER_IMAGES.kitchenAutonomy,
+    DOSSIER_IMAGES.kitchenAutonomyFallback,
+    '/images/dossier_cocina_autonomia_1793908198321.jpg',
+  ];
 
   // Interactive "Durante la comida" Visual Support Board state (Page 8 of Dossier)
   const [selectedMealCard, setSelectedMealCard] = useState<string | null>(null);
@@ -193,12 +200,18 @@ export const ServiciosView: React.FC = () => {
 
           <div className="lg:col-span-5 space-y-2">
             <div className="rounded-xl overflow-hidden border border-neutral-200 shadow-xs bg-stone-100">
-              {!kitchenImgError ? (
+              {!kitchenImgError && kitchenIdx < kitchenCandidates.length ? (
                 <img
-                  src={DOSSIER_IMAGES.kitchenAutonomy}
+                  src={kitchenCandidates[kitchenIdx]}
                   alt="Persona joven cocinando de forma autónoma utilizando una freidora de aire en una cocina accesible y luminosa con frutas frescas en la encimera"
                   referrerPolicy="no-referrer"
-                  onError={() => setKitchenImgError(true)}
+                  onError={() => {
+                    if (kitchenIdx < kitchenCandidates.length - 1) {
+                      setKitchenIdx((i) => i + 1);
+                    } else {
+                      setKitchenImgError(true);
+                    }
+                  }}
                   className="w-full h-64 sm:h-72 object-cover"
                 />
               ) : (

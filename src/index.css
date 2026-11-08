@@ -76,7 +76,8 @@ html.high-contrast .bg-neutral-50,
 html.high-contrast .bg-emerald-50,
 html.high-contrast .bg-emerald-100,
 html.high-contrast .bg-amber-50,
-html.high-contrast .bg-[#F9FBF9] {
+html.high-contrast [class*="bg-[#F9FBF9]"],
+html.high-contrast .bg-\[\#F9FBF9\] {
   background-color: #0a0a0a !important;
   border-color: #FFFF00 !important;
   color: #FFFFFF !important;
@@ -85,7 +86,8 @@ html.high-contrast .bg-[#F9FBF9] {
 html.high-contrast .text-neutral-900,
 html.high-contrast .text-neutral-800,
 html.high-contrast .text-neutral-700,
-html.high-contrast .text-[#121212],
+html.high-contrast [class*="text-[#121212]"],
+html.high-contrast .text-\[\#121212\],
 html.high-contrast .text-emerald-950,
 html.high-contrast .text-emerald-900 {
   color: #FFFFFF !important;

@@ -18,12 +18,12 @@ import {
   UserRole,
   UserPermissions,
 } from '../types/cms';
-import { ARTICLES, INSTITUTIONAL_DATA } from '../data/associationData';
+import { ARTICLES, INSTITUTIONAL_DATA, DOSSIER_IMAGES } from '../data/associationData';
 
 const DEFAULT_CONFIG: SiteConfig = {
   logoType: 'vector',
-  logoUrl: '/assets/aistudio/Logotipo_nutridiversa_cuadrado-removebg-preview_123d2a34.png',
-  logoUrlStacked: '/assets/aistudio/Logotipo_nutridiversa_cuadrado-removebg-preview_123d2a34.png',
+  logoUrl: '/logo_def_1.png',
+  logoUrlStacked: '/logo_def_2.png',
   logoTitleFirst: 'Nutri',
   logoTitleSecond: 'Diversa',
   logoSubtitle: 'ASOCIACIÓN DE NUTRICIÓN EN LA DISCAPACIDAD',
@@ -37,7 +37,7 @@ const DEFAULT_CONFIG: SiteConfig = {
     'Asociación sin ánimo de lucro de ámbito estatal con sede en Alicante. Impulsamos proyectos de información y educación alimentaria y nutricional accesibles para personas con discapacidad, autismo, enfermedades raras, situación de dependencia y sus familias.',
   heroButtonText: 'Proyecto Piloto y Líneas de Actuación',
   heroButtonLink: '/servicios',
-  heroImageUrl: '/src/assets/images/dossier_mesa_inclusiva_1793908196707.jpg',
+  heroImageUrl: DOSSIER_IMAGES.coverMeal,
   aboutMission: INSTITUTIONAL_DATA.mission,
   aboutVision: INSTITUTIONAL_DATA.vision,
   aboutHistory:
@@ -121,11 +121,95 @@ interface CMSContextType {
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
+const DEFAULT_MEDIA_FILES: MediaAsset[] = [
+  {
+    id: 'media-logo-horiz-png',
+    name: 'Logotipo Oficial Horizontal (PNG)',
+    url: '/logo_def_1.png',
+    type: 'logo',
+    size: '1.2 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-logo-horiz-svg',
+    name: 'Logotipo Oficial Horizontal (SVG)',
+    url: '/logo_def_1.svg',
+    type: 'logo',
+    size: '2.8 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-logo-stacked-png',
+    name: 'Logotipo Oficial Apilado / Vertical (PNG)',
+    url: '/logo_def_2.png',
+    type: 'logo',
+    size: '1.8 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-logo-stacked-svg',
+    name: 'Logotipo Oficial Apilado / Vertical (SVG)',
+    url: '/logo_def_2.svg',
+    type: 'logo',
+    size: '2.7 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-logo-transparent',
+    name: 'Logotipo Horizontal Transparente Web',
+    url: '/assets/aistudio/logo_horiz_tran_sin_c690c1cd.png',
+    type: 'logo',
+    size: '151 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-photo-mesa-inclusiva',
+    name: 'Fotografía: Mesa Inclusiva y Cubiertos Adaptados',
+    url: '/assets/images/dossier_mesa_inclusiva_1793908196707.jpg',
+    type: 'image',
+    size: '901 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-photo-taller-familias',
+    name: 'Fotografía: Taller de Alimentación con Familias',
+    url: '/assets/images/dossier_taller_familias_1793908198282.jpg',
+    type: 'image',
+    size: '877 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-photo-cocina-autonomia',
+    name: 'Fotografía: Autonomía en Cocina Cotidiana',
+    url: '/assets/images/dossier_cocina_autonomia_1793908198321.jpg',
+    type: 'image',
+    size: '779 KB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+  {
+    id: 'media-dossier-pdf',
+    name: 'Dossier de Presentación Institucional (PDF)',
+    url: '/assets/aistudio/Dossier_NutriDiversa__borrador_final_actualizado_dfe3321f.pdf',
+    type: 'document',
+    size: '1 MB',
+    uploadedBy: 'system',
+    createdAt: '2026-03-01T10:00:00Z',
+  },
+];
+
 export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [siteConfig, setSiteConfig] = useState<SiteConfig>(DEFAULT_CONFIG);
   const [articles, setArticles] = useState<CMSArticle[]>([]);
   const [partnerResources, setPartnerResources] = useState<PartnerResourceItem[]>(INITIAL_PARTNER_RESOURCES);
-  const [mediaFiles, setMediaFiles] = useState<MediaAsset[]>([]);
+  const [mediaFiles, setMediaFiles] = useState<MediaAsset[]>(DEFAULT_MEDIA_FILES);
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -156,6 +240,22 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!merged.contactEmail || merged.contactEmail.includes('contacto@nutridiversa.org') || merged.contactEmail.includes('@gmail.com')) {
       merged.contactEmail = 'info@nutridiversa.org';
     }
+    // Clean up any legacy or broken /src/ paths that may have persisted in Firestore or localStorage
+    if (merged.heroImageUrl) {
+      if (merged.heroImageUrl.includes('/src/assets/images/')) {
+        merged.heroImageUrl = merged.heroImageUrl.replace('/src/assets/images/', '/assets/images/');
+      } else if (merged.heroImageUrl.startsWith('/src/')) {
+        merged.heroImageUrl = merged.heroImageUrl.replace('/src/', '/');
+      }
+    } else {
+      merged.heroImageUrl = DOSSIER_IMAGES.coverMeal;
+    }
+    if (merged.logoUrl && merged.logoUrl.startsWith('/src/')) {
+      merged.logoUrl = merged.logoUrl.replace('/src/', '/');
+    }
+    if (merged.logoUrlStacked && merged.logoUrlStacked.startsWith('/src/')) {
+      merged.logoUrlStacked = merged.logoUrlStacked.replace('/src/', '/');
+    }
     merged.aboutMission = INSTITUTIONAL_DATA.mission;
     merged.aboutVision = INSTITUTIONAL_DATA.vision;
     return merged;
@@ -177,7 +277,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (storedMedia) {
         const parsedM = JSON.parse(storedMedia);
         if (Array.isArray(parsedM) && parsedM.length > 0) {
-          setMediaFiles(parsedM);
+          // Merge with DEFAULT_MEDIA_FILES so defaults are never lost
+          const existingIds = new Set(parsedM.map((m: MediaAsset) => m.id));
+          const missingDefaults = DEFAULT_MEDIA_FILES.filter((d) => !existingIds.has(d.id));
+          setMediaFiles([...parsedM, ...missingDefaults]);
         }
       }
     } catch (e) {
